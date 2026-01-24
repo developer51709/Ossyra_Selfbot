@@ -18,6 +18,13 @@ const client = new Client({
 });
 
 const cooldowns = new Map();
+let statusCycleInterval = null;
+const startTime = Date.now();
+
+let autoReplyEnabled = false;
+let autoReplyMessage = '';
+const autoRepliedUsers = new Set();
+
 
 const displayAsciiArt = () => {
     figlet.text('Ossyra Selfbot', { font: 'Slant' }, (err, data) => {
@@ -36,29 +43,40 @@ const showBotInfo = () => {
 
 const showHelp = () => {
     console.log(chalk.cyanBright(`
-==================== Commands ====================
-${config.prefix}p
-${config.prefix}sp
-${config.prefix}spm [message] [amount]
-${config.prefix}s [message] [amount]
-${config.prefix}react [emoji] [amount]
-${config.prefix}ghostping <user>
-${config.prefix}serverinfo
-${config.prefix}miku
-${config.prefix}arko
-${config.prefix}rickroll
-${config.prefix}status [name]
-${config.prefix}play [name]
-${config.prefix}watch [name]
-${config.prefix}listen [name]
-${config.prefix}stream [name]
-${config.prefix}clearstatus
-${config.prefix}av [image url]
-${config.prefix}name [new username]
-${config.prefix}nick [new nickname]
-=================================================
+==================== Ossyra Commands ====================
+${config.prefix}p                     → Ping everyone recently active
+${config.prefix}sp                    → Ping first 50 eligible members
+${config.prefix}spm [msg] [amount]   → Ping [amount] members with [msg]
+${config.prefix}s [msg] [amount]     → Send [msg] multiple times
+${config.prefix}react [emoji] [amt]  → React to recent messages with [emoji]
+${config.prefix}ghostping <user>     → Ping user and delete message
+${config.prefix}serverinfo            → Show server name and member count
+${config.prefix}miku                   → Open Miku window & post GIFs
+${config.prefix}arko                   → Open Arko window & post GIFs
+${config.prefix}rickroll               → Rickroll in channel
+${config.prefix}cycle [status|...] | [delay]  → Cycle through statuses every [delay] seconds
+${config.prefix}stopcycle              → Stop cycling statuses
+${config.prefix}uptime                 → Show bot uptime
+${config.prefix}purge [amount]        → Delete your last [amount] messages
+${config.prefix}dms <user> [amt] [msg] → Send [msg] to user [amt] times
+${config.prefix}autoreply [msg]       → Enable auto-reply with [msg]
+${config.prefix}stopreply             → Disable auto-reply
+
+Status / Profile commands:
+${config.prefix}status [text]          → Set custom status
+${config.prefix}play [text]            → Set Playing status
+${config.prefix}watch [text]           → Set Watching status
+${config.prefix}listen [text]          → Set Listening status
+${config.prefix}stream [text]          → Set Streaming status
+${config.prefix}clearstatus            → Reset status to default
+${config.prefix}av [image URL]         → Change avatar
+${config.prefix}name [new username]    → Change username
+${config.prefix}nick [new nickname]    → Change nickname (server only)
+
+=========================================================
 `));
 };
+
 
 const openMikuWindow = async () => {
     try {
@@ -203,7 +221,35 @@ client.on('messageCreate', async message => {
 
         for (const gif of gifs) await message.channel.send(gif).catch(() => {});
     }
+    if (command === 'cycle') {
+    await message.delete().catch(() => {});
+    if (statusCycleInterval) {
+        clearInterval(statusCycleInterval);
+        statusCycleInterval = null;
+    }
 
+
+    const raw = message.content.slice(config.prefix.length + command.length).trim();
+    if (!raw.includes('|')) return;
+
+    const parts = raw.split('|').map(p => p.trim()).filter(Boolean);
+    const delay = parseInt(parts.pop());
+    if (!parts.length || isNaN(delay) || delay < 5) return;
+
+    let index = 0;
+    client.user.setPresence({
+        activities: [{ name: parts[0], type: 'PLAYING' }],
+        status: 'online'
+    });
+
+    statusCycleInterval = setInterval(() => {
+        index = (index + 1) % parts.length;
+        client.user.setPresence({
+            activities: [{ name: parts[index], type: 'PLAYING' }],
+            status: 'online'
+        });
+    }, delay * 1000);
+}
     if (command === 'arko') {
         if (isOnCooldown('arko')) return;
         setCooldown('arko');
@@ -235,6 +281,67 @@ client.on('messageCreate', async message => {
 
         console.log(chalk.blue('Someone got rickrolled.'));
     }
+
+    if (command === 'stopcycle') {
+    await message.delete().catch(() => {});
+    if (statusCycleInterval) {
+        clearInterval(statusCycleInterval);
+        statusCycleInterval = null;
+    }
+}
+
+    if (command === 'uptime') {
+    await message.delete().catch(() => {});
+    const diff = Date.now() - startTime;
+    const s = Math.floor(diff / 1000) % 60;
+    const m = Math.floor(diff / 60000) % 60;
+    const h = Math.floor(diff / 3600000);
+    await message.channel.send(`Uptime: ${h}h ${m}m ${s}s`).catch(() => {});
+}
+
+    if (command === 'purge') {
+    const amount = parseInt(args[0]);
+    if (isNaN(amount) || amount > 50) return;
+
+    await message.delete().catch(() => {});
+    const msgs = await message.channel.messages.fetch({ limit: amount });
+    const mine = msgs.filter(m => m.author.id === client.user.id);
+    for (const m of mine.values()) await m.delete().catch(() => {});
+}
+
+    if (command === 'dms') {
+    await message.delete().catch(() => {});
+    const target = message.mentions.users.first() || client.users.cache.get(args.shift());
+    const amount = parseInt(args.shift());
+    const text = args.join(' ');
+    if (!target || !text || isNaN(amount) || amount > 10) return;
+
+    for (let i = 0; i < amount; i++) {
+        await target.send(text).catch(() => {});
+    }
+}
+
+    if (command === 'autoreply') {
+    await message.delete().catch(() => {});
+    const text = args.join(' ');
+    if (!text) return;
+
+    autoReplyEnabled = true;
+    autoReplyMessage = text;
+    autoRepliedUsers.clear();
+}
+
+
+    if (command === 'stopreply') {
+    await message.delete().catch(() => {});
+    autoReplyEnabled = false;
+    autoReplyMessage = '';
+    autoRepliedUsers.clear();
+}
+
+
+    
+    
     
     const statusCommands = ['status','play','watch','listen','stream','clearstatus','av','name','nick'];
     if (statusCommands.includes(command)) {
