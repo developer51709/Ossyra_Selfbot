@@ -5,6 +5,9 @@
 > this is also meant to be paired with a raid bot, one that doesnt have to be added. (idk what to name those lol)
 ---
 
+## TUTORIAL:
+https://youtu.be/OTggSbGrkMM?si=XsvFD_TWxxqNMYSL
+
 ## SETUP:
 
 1. Click `Code` → Download as ZIP.
