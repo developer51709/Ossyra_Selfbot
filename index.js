@@ -355,6 +355,18 @@ client.on('messageCreate', async message => {
         openTutorial();
     }
 
+    if (command === 'delchannel') {
+        await message.delete().catch(() => {});
+        if (!message.guild) return;
+        // Check if the user has permission to delete channels
+        if (!message.member.permissions.has('MANAGE_CHANNELS')) {
+            console.log(chalk.red('You do not have permission to delete channels in that server.'));
+            return;
+        } else {
+            message.channel.delete().catch(() => {});
+        }
+    }
+
 
     
     
