@@ -392,9 +392,6 @@ client.on('messageCreate', async message => {
 if (!config.token) {
     console.error(chalk.red('No token provided in config.js'));
     process.exit(1);
-} else if (config.token.length !== 59) {
-    console.error(chalk.red('Invalid token provided in config.js'));
-    process.exit(1);
 } else {
     client.login(config.token).catch(() => {
         console.error(chalk.red('Failed to login with provided token'));
