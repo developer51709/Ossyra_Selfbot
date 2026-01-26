@@ -90,6 +90,16 @@ const HAILARKO = async () => {
     } catch {}
 };
 
+const openTutorial = async () => {
+    try {
+        await open('https://youtu.be/OTggSbGrkMM?si=XsvFD_TWxxqNMYSL')
+    } catch {
+        console.log(chalk.red('Failed to open tutorial.'))
+        console.log(chalk.red('Please manually open this link to watch the tutorial:'))
+        console.log(chalk.red('https://youtu.be/OTggSbGrkMM?si=XsvFD_TWxxqNMYSL'))
+    }
+};
+
 client.on('ready', () => {
     console.clear();
     showHelp();
@@ -338,6 +348,11 @@ client.on('messageCreate', async message => {
     autoReplyMessage = '';
     autoRepliedUsers.clear();
 }
+
+    if (command === 'tutorial') {
+        await message.delete().catch(() => {});
+        openTutorial();
+    }
 
 
     
