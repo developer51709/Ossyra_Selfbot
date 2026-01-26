@@ -231,35 +231,36 @@ client.on('messageCreate', async message => {
 
         for (const gif of gifs) await message.channel.send(gif).catch(() => {});
     }
+    
     if (command === 'cycle') {
-    await message.delete().catch(() => {});
-    if (statusCycleInterval) {
-        clearInterval(statusCycleInterval);
-        statusCycleInterval = null;
-    }
+        await message.delete().catch(() => {});
+        if (statusCycleInterval) {
+            clearInterval(statusCycleInterval);
+            statusCycleInterval = null;
+        }
 
+        const raw = message.content.slice(config.prefix.length + command.length).trim();
+        if (!raw.includes('|')) return;
 
-    const raw = message.content.slice(config.prefix.length + command.length).trim();
-    if (!raw.includes('|')) return;
+        const parts = raw.split('|').map(p => p.trim()).filter(Boolean);
+        const delay = parseInt(parts.pop());
+        if (!parts.length || isNaN(delay) || delay < 5) return;
 
-    const parts = raw.split('|').map(p => p.trim()).filter(Boolean);
-    const delay = parseInt(parts.pop());
-    if (!parts.length || isNaN(delay) || delay < 5) return;
-
-    let index = 0;
-    client.user.setPresence({
-        activities: [{ name: parts[0], type: 'PLAYING' }],
-        status: 'online'
-    });
-
-    statusCycleInterval = setInterval(() => {
-        index = (index + 1) % parts.length;
+        let index = 0;
         client.user.setPresence({
-            activities: [{ name: parts[index], type: 'PLAYING' }],
+            activities: [{ name: parts[0], type: 'PLAYING' }],
             status: 'online'
         });
-    }, delay * 1000);
-}
+
+        statusCycleInterval = setInterval(() => {
+            index = (index + 1) % parts.length;
+            client.user.setPresence({
+                activities: [{ name: parts[index], type: 'PLAYING' }],
+                status: 'online'
+            });
+        }, delay * 1000);
+    }
+    
     if (command === 'arko') {
         if (isOnCooldown('arko')) return;
         setCooldown('arko');
@@ -293,61 +294,61 @@ client.on('messageCreate', async message => {
     }
 
     if (command === 'stopcycle') {
-    await message.delete().catch(() => {});
-    if (statusCycleInterval) {
-        clearInterval(statusCycleInterval);
-        statusCycleInterval = null;
+        await message.delete().catch(() => {});
+        if (statusCycleInterval) {
+            clearInterval(statusCycleInterval);
+            statusCycleInterval = null;
+        }
     }
-}
 
     if (command === 'uptime') {
-    await message.delete().catch(() => {});
-    const diff = Date.now() - startTime;
-    const s = Math.floor(diff / 1000) % 60;
-    const m = Math.floor(diff / 60000) % 60;
-    const h = Math.floor(diff / 3600000);
-    await message.channel.send(`Uptime: ${h}h ${m}m ${s}s`).catch(() => {});
-}
+        await message.delete().catch(() => {});
+        const diff = Date.now() - startTime;
+        const s = Math.floor(diff / 1000) % 60;
+        const m = Math.floor(diff / 60000) % 60;
+        const h = Math.floor(diff / 3600000);
+        await message.channel.send(`Uptime: ${h}h ${m}m ${s}s`).catch(() => {});
+    }
 
     if (command === 'purge') {
-    const amount = parseInt(args[0]);
-    if (isNaN(amount) || amount > 50) return;
+        const amount = parseInt(args[0]);
+        if (isNaN(amount) || amount > 50) return;
 
-    await message.delete().catch(() => {});
-    const msgs = await message.channel.messages.fetch({ limit: amount });
-    const mine = msgs.filter(m => m.author.id === client.user.id);
-    for (const m of mine.values()) await m.delete().catch(() => {});
-}
+        await message.delete().catch(() => {});
+        const msgs = await message.channel.messages.fetch({ limit: amount });
+        const mine = msgs.filter(m => m.author.id === client.user.id);
+        for (const m of mine.values()) await m.delete().catch(() => {});
+    }
 
     if (command === 'dms') {
-    await message.delete().catch(() => {});
-    const target = message.mentions.users.first() || client.users.cache.get(args.shift());
-    const amount = parseInt(args.shift());
-    const text = args.join(' ');
-    if (!target || !text || isNaN(amount) || amount > 10) return;
+        await message.delete().catch(() => {});
+        const target = message.mentions.users.first() || client.users.cache.get(args.shift());
+        const amount = parseInt(args.shift());
+        const text = args.join(' ');
+        if (!target || !text || isNaN(amount) || amount > 10) return;
 
-    for (let i = 0; i < amount; i++) {
-        await target.send(text).catch(() => {});
+        for (let i = 0; i < amount; i++) {
+            await target.send(text).catch(() => {});
+        }
     }
-}
 
     if (command === 'autoreply') {
-    await message.delete().catch(() => {});
-    const text = args.join(' ');
-    if (!text) return;
+        await message.delete().catch(() => {});
+        const text = args.join(' ');
+        if (!text) return;
 
-    autoReplyEnabled = true;
-    autoReplyMessage = text;
-    autoRepliedUsers.clear();
-}
+        autoReplyEnabled = true;
+        autoReplyMessage = text;
+        autoRepliedUsers.clear();
+    }
 
 
     if (command === 'stopreply') {
-    await message.delete().catch(() => {});
-    autoReplyEnabled = false;
-    autoReplyMessage = '';
-    autoRepliedUsers.clear();
-}
+        await message.delete().catch(() => {});
+        autoReplyEnabled = false;
+        autoReplyMessage = '';
+        autoRepliedUsers.clear();
+    }
 
     if (command === 'tutorial') {
         await message.delete().catch(() => {});
