@@ -44,23 +44,26 @@ const showBotInfo = () => {
 const showHelp = () => {
     console.log(chalk.cyanBright(`
 ==================== Ossyra Commands ====================
-${config.prefix}p                     → Ping everyone recently active
-${config.prefix}sp                    → Ping first 50 eligible members
-${config.prefix}spm [msg] [amount]   → Ping [amount] members with [msg]
-${config.prefix}s [msg] [amount]     → Send [msg] multiple times
-${config.prefix}react [emoji] [amt]  → React to recent messages with [emoji]
-${config.prefix}ghostping <user>     → Ping user and delete message
-${config.prefix}serverinfo            → Show server name and member count
+${config.prefix}credits                → Show credits
+${config.prefix}tutorial               → Open tutorial video
+${config.prefix}p                      → Ping everyone recently active
+${config.prefix}sp                     → Ping first 50 eligible members
+${config.prefix}spm [msg] [amount]     → Ping [amount] members with [msg]
+${config.prefix}s [msg] [amount]       → Send [msg] multiple times
+${config.prefix}react [emoji] [amt]    → React to recent messages with [emoji]
+${config.prefix}ghostping <user>       → Ping user and delete message
+${config.prefix}serverinfo             → Show server name and member count
 ${config.prefix}miku                   → Open Miku window & post GIFs
 ${config.prefix}arko                   → Open Arko window & post GIFs
 ${config.prefix}rickroll               → Rickroll in channel
 ${config.prefix}cycle [status|...] | [delay]  → Cycle through statuses every [delay] seconds
 ${config.prefix}stopcycle              → Stop cycling statuses
 ${config.prefix}uptime                 → Show bot uptime
-${config.prefix}purge [amount]        → Delete your last [amount] messages
+${config.prefix}purge [amount]         → Delete your last [amount] messages
 ${config.prefix}dms <user> [amt] [msg] → Send [msg] to user [amt] times
-${config.prefix}autoreply [msg]       → Enable auto-reply with [msg]
-${config.prefix}stopreply             → Disable auto-reply
+${config.prefix}autoreply [msg]        → Enable auto-reply with [msg]
+${config.prefix}stopreply              → Disable auto-reply
+${config.prefix}clear                  → Send a long message to clear chat
 
 Status / Profile commands:
 ${config.prefix}status [text]          → Set custom status
@@ -72,6 +75,9 @@ ${config.prefix}clearstatus            → Reset status to default
 ${config.prefix}av [image URL]         → Change avatar
 ${config.prefix}name [new username]    → Change username
 ${config.prefix}nick [new nickname]    → Change nickname (server only)
+
+Requires advanced permissions:
+${config.prefix}delchannel             → Delete the current channel
 
 =========================================================
 `));
