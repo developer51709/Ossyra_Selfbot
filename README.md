@@ -18,13 +18,29 @@ https://youtu.be/OTggSbGrkMM?si=XsvFD_TWxxqNMYSL
 
 ## Getting your Discord Token:
 
-1. Go to [https://discord.com](https://discord.com), sign in.
-2. Open your **Developer Console** (`Ctrl + Shift + I`) → go to the **Network tab**, then in filter search @me.
-3. Refresh the page, look for @me - scroll down till you see "authorization".
-4. copy everything to the RIGHT of authorization.
+<details>
+    <summary>Method 1 (easy)</summary>
+    <ol>
+        <li>Add the extension that can be found <a href="https://chromewebstore.google.com/detail/accgjfooejbpdchkfpngkjjdekkcbnfd?utm_source=item-share-cb">here</a></li>
+        <li>Open <a href="https://discord.com">Discord</a> in your browser and login</li>
+        <li>Click on the extension</li>
+        <li>Click the "Get Token" button</li>
+        <li>Copy the token</li>
+        <li>Open the <code>config.js</code> file</li>
+        <li>Paste your token in the <code>token</code> veriable</li>
+        <li>Start the self-bot</li>
+    </ol>
+</details>
 
-Open the config.js file.
-
-Paste the token where it says token.
-
-Adjust the cooldowns to whatever you want.
+<details>
+    <summary>Method 2 (harder)</summary>
+    <ol>
+        <li>Go to <a href="https://discord.com">https://discord.com</a>, sign in.</li>
+        <li>Open your <strong>Developer Console</strong> (<code>Ctrl + Shift + I</code>) → go to the <strong>Network tab</strong>, then in filter search @me.</li>
+        <li>Refresh the page, look for @me - scroll down till you see "authorization".</li>
+        <li>copy everything to the RIGHT of authorization.</li>
+        <li>Open the <code>config.js</code> file.</li>
+        <li>Paste the token where it says <code>token</code>.</li>
+        <li>Adjust the cooldowns to whatever you want.</li>
+    </ol>
+</details>
