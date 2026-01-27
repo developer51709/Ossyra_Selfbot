@@ -367,6 +367,15 @@ client.on('messageCreate', async message => {
         }
     }
 
+    if (command === 'clear') {
+        await message.delete().catch(() => {
+            console.log(chalk.red('Failed to delete message.'))
+        });
+        // send a really long message to clear the chat with a zero-width character on each line
+        const clearMessage = Array(100).fill('\u200B').join('\n');
+        await message.channel.send(clearMessage).catch(() => {});
+    }
+
 
     
     
