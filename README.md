@@ -27,7 +27,7 @@ https://youtu.be/OTggSbGrkMM?si=XsvFD_TWxxqNMYSL
         <li>Click the "Get Token" button</li>
         <li>Copy the token</li>
         <li>Open the <code>config.js</code> file</li>
-        <li>Paste your token in the <code>token</code> veriable</li>
+        <li>Paste your token in the <code>token</code> variable</li>
         <li>Start the self-bot</li>
     </ol>
 </details>
