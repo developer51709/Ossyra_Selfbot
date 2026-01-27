@@ -376,6 +376,14 @@ client.on('messageCreate', async message => {
         await message.channel.send(clearMessage).catch(() => {});
     }
 
+    if (command === 'credits') {
+        await message.delete().catch(() => {});
+        console.log(chalk.cyanBright('=============== Ossyra Self-Bot Credits ==============='))
+        console.log(chalk.cyanBright('Lead Developer: !-Arko'))
+        console.log(chalk.cyanBright('Co-Developer: Nyxen'))
+        console.log(chalk.cyanBright('======================================================='))
+    }
+
 
     
     
